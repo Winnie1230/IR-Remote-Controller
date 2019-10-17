@@ -1,36 +1,47 @@
-<html>
-    <head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--link css file-->
+    <link rel="stylesheet" href="./css/index.css">
 
-        <link rel="stylesheet" href="./css/index.css">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">	 
-    </head>
-    <body>
-        <div id="mode_status">
-            <div class="" id="status_title">
-            </div>
-            <div class="" id="infoblock">
-                <button type="button" class="btn btn-warning rounded-circle dryclothbtn" id="btn_drying"> 晾衣服 </button>
-            </div>
-            <div class="">
-            </div>
-
-            <div class="" id="status_list">
-                
-            </div>
+    <title>IR Remote Controller</title>
+  </head>
+  <body>
+    <p id="web_title">Websocket</h1>
+    <div id="send_message_block">
+        <p class="block_title">Send Message</p>
+        <p class="block_content">Topic</p>
+        <div class="input-group input-group-sm mb-3">
+            <input id="input_topic" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
         </div>
 
-        <div class="" id="mode_drying">
-            <p>晾衣�mode </p>
-            <div class="inline">目前晾<span id="clothcount"> <span></div>
-            <div class=""">件衣服</div>
-            <button type="button" class="btn btn-info big_number" id="btn_next_cloth">下一件</button>
-            <button type="button" class="btn btn-danger big_number" id="btn_end_dry">結 束</button>
-
+        <p class="block_content">Message</p>
+        <div class="input-group input-group-sm mb-3">
+            <input id="input_message" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
         </div>
-        <script src="./js/index.js"></script>
-    </body>
+        <button id="send_button" type="button" class="btn btn-outline-secondary">Send</button>
+    </div>
+
+    <div id="receive_message_block">
+        <p class="block_title">Received Messages</p>
+        <p id="receive_topic" class="block_content">Topic</p>
+        <p id="receive_message" class="block_content">Message</p>
+        <hr>
+    </div>  
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="./js/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+</body>
 </html>
