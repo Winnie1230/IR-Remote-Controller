@@ -43,7 +43,7 @@ hr {
 
 #receive_message_block{
     width: 50%;
-    height: 300px;
+    height: 350px;
     border: 2px #AAAAAA solid;
     border-radius: 10px;
     //background-color: #CCDDFF;
@@ -51,6 +51,7 @@ hr {
     padding-right: 20px;
     padding-left: 20px;
     float: left;
+    overflow: auto;
 }
 
 #send_button{
@@ -64,4 +65,29 @@ hr {
 
 #receive_message{
 
+}
+
+#mqtt_receive_topic{
+    width: 30%;
+    height: auto;
+    //border: 2px #AAAAAA solid;
+    //border-radius: 10px;
+    //background-color: #CCDDFF;
+    margin-right: 20px;
+    float: left;
+}
+
+#mqtt_receive_message{
+    width: 65%;
+    height: auto;
+    //border: 2px #FFCC22 solid;
+    //border-radius: 10px;
+    //background-color: #CCDDFF;
+    float: left;
+}
+
+.receive_message_content{
+    font-family: comic sans ms;
+    font-weight: bold;
+    font-size: 15px;
 }

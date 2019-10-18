@@ -1,47 +1,37 @@
 import asyncio
 from aiohttp import web
+import paho.mqtt.client as mqtt
+
+'''-----MQTT Server Setting-----'''
+MQTTServerIP = "nckuwinnieliu.ddns.net"
+MQTTServerPort = 1883
 
 FILE_PATH = './public'
 MAIN_INDEX = '/index.html'
-#PORT = 11230
-'''
-async def ClothDrying(request):
-    global key
-    global count
-    key = request.rel_url.query['key']
-    finish = request.rel_url.query['end']
-    elif finish == '1':
-        return web.Response(text=key + " finish",content_type='text/html')
-    elif finish == '2':
-        return web.Response(text=key + " next cloth",content_type='text/html')
-     
 
-async def ClothGathering(request):
-    global key
-    print("Get new req")
-    key = request.rel_url.query['key']
-    pack = request.rel_url.query['group']
-    state = request.rel_url.query['state']
-    #with open(FILE_PATH + MAIN_INDEX) as f:
-    #return web.Response(text=f.read(),content_type='text/html')
+PORT = 11230 #web port
+
+async def Send(request):
+    #await asyncio.sleep(1)
+    print("send")
+    topic = request.rel_url.query['topic']
+    message = request.rel_url.query['message']
+    print("topic:" + topic + "  message:" + message)
+    
+    '''-----MQTT Publish-----'''
+    mqttc.publish(topic,message)
+
     return web.Response(text="Hello World",content_type='text/html')
-'''
-
-async def Test():
-    return web.Response(text="Hello World",content_type='text/html')
-
-    #while True:
-        #await asyncio.sleep(1)
-        #print("test")
-
+   
 async def init(loop):
-    app = web.Application(loop=loop)
+    app = web.Application()
     app.router.add_static('/public','./public')
+    
     #receiving request
-    app.router.add_get('/test',Test)
+    app.router.add_get('/send',Send)
     #app.router.add_get('/drying',ClothDrying)
     #app.router.add_get('/gathering',ClothGathering)
-    srv = await loop.create_server(app.make_handler(),host='0.0.0.0')
+    srv = await loop.create_server(app._make_handler(),host='0.0.0.0', port=PORT)
     print("server created")
     return srv
 
@@ -49,8 +39,9 @@ if __name__ == '__main__':
     try:
         loop = asyncio.get_event_loop()
 
-        #create task(can add any function)
-        loop.create_task(Test())
+        '''-----MQTT Server-----'''
+        mqttc = mqtt.Client("python_hub")
+        mqttc.connect(MQTTServerIP, MQTTServerPort)
         
         loop.run_until_complete(init(loop))
         loop.run_forever()
