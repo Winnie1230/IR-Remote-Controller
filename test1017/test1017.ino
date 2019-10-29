@@ -1,8 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
  
-const char* ssid = "Eating"; // Enter your WiFi name
-const char* password =  "hsieh861227"; // Enter WiFi password
+const char* homessid = "Eating"; // Enter your WiFi name
+const char* homepassword =  "hsieh861227"; // Enter WiFi password
 const char* mqttServer = "soldier.cloudmqtt.com";
 const int mqttPort = 10155;
 const char* mqttUser = "gqozliri";
@@ -13,9 +13,8 @@ PubSubClient client(espClient);
  
 void setup() {
  
-  Serial.begin(115200);
- 
-  WiFi.begin(ssid, password);
+  Serial.begin(115200); 
+  WiFi.begin(homessid,homepassword);
  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
