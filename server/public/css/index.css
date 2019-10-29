@@ -1,0 +1,55 @@
+#web_title{
+    font-family: comic sans ms;
+    font-weight: bold;
+    font-size: 25px;
+    color: #FFFFFF;
+    margin-top: 10px;
+    //margin-left: 40px;
+}
+
+.navbar_setting{
+    margin-bottom: 50px;
+}
+
+p{
+    font-family: comic sans ms;
+    font-weight: bold;
+    color: #888888;
+}
+
+#controller_state_block{
+    width: 28%;
+    height: auto;
+    border: 2px #AAAAAA solid;
+    border-radius: 10px;
+    //background-color: #CCDDFF;
+    margin-left: 40px;
+    margin-right: 40px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+	padding-bottom: 20px;
+    overflow: auto;
+}
+
+.state_block_title{
+	font-size: 25px;
+}
+
+.sensor_name{
+	font-size: 20px;
+}
+
+#search_button{
+	margin-right: 20px;
+}
+
+button{
+	font-family: comic sans ms;
+}
+
+#logout_button{
+	font-size: 20px;
+	font-weight: bold;
+	color: #33CCFF;
+}
