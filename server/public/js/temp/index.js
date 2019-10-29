@@ -1,17 +1,8 @@
 var host = "nckuwinnieliu.ddns.net"
 var port = 11230
 /*-----Create js Websocket-----*/
-//var ws = new WebSocket("ws://nckuwinnieliu.ddns.net:8765");
-/*
-ws.onopen = function(){
-	alert("connected");
-}
+var ws = new WebSocket("ws://nckuwinnieliu.ddns.net:8765");
 
-ws.onmessage = function(evt){
-	var received_msg = evt.data;
-	console.log(received_msg);
-}
-*/
 $("#send_button").click(()=>{
     send_topic = $("#input_topic").val();
     send_message = $("#input_message").val();
