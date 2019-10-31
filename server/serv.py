@@ -79,18 +79,27 @@ async def WebsocketHandler(websocket, path):
 			json_str = json.dumps(state)
 			await websocket.send(json_str)
 			print("send message")
-			execute = 0
+			received = 0
 			break
 
-	#name = await websocket.recv()
-	#print(f"<{name}")
+async def Search(request):
+    print("search")
+    search_num = request.rel_url.query['product']
+    print("search_num:"+search_num)
 
-	#greeting = f"Hello {name}"
-	
-	#await websocket.send("Hello World")
-	#print(f"> {greeting}")
-	#TestFunc()
-	#print(await TestFunc())
+	#verify product_number and on/off state in json file
+    with open('product_num.json','r') as f:
+        product_dict = json.load(f)
+    if (search_num in product_dict):
+        if(product_dict[search_num] == 'on'):
+			#print("find product and it's used'")
+        	return web.Response(text="used",content_type='text/html')
+        else:
+			#print("find product but not used")
+            return web.Response(text="not_used",content_type='text/html')
+    else:
+		#print("no product")
+        return web.Response(text="no",content_type='text/html')
 
 
 async def init(loop):
@@ -102,7 +111,7 @@ async def init(loop):
     app.router.add_get('/', LoginPage)
     app.router.add_get('/login', Login)
     app.router.add_get('/state', ControllerState)
-	#app.router.add_get('/ws', WebsocketHandler)
+    app.router.add_get('/search', Search)
     srv = await loop.create_server(app._make_handler(),host='0.0.0.0', port=PORT)
     print("server created")
     return srv

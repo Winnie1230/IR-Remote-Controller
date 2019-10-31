@@ -8,19 +8,25 @@
 }
 
 .navbar_setting{
-    margin-bottom: 50px;
+    margin-bottom: 20px;
 }
 
 p{
     font-family: comic sans ms;
     font-weight: bold;
-    color: #888888;
+    color: #666666;
+}
+
+#remind_text{
+	font-size: 20px;
+	color: #000000;
+	margin-left: 10px;
 }
 
 #controller_state_block{
     width: 28%;
     height: auto;
-    border: 2px #AAAAAA solid;
+    border: 2px #888888 solid;
     border-radius: 10px;
     //background-color: #CCDDFF;
     margin-left: 40px;

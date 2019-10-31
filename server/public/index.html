@@ -20,12 +20,14 @@
 		<nav class="navbar navbar-dark bg-dark navbar_setting">
 		 	<p id="web_title">Websocket</p>
 			<form class="form-inline">
-			<input class="form-control mr-sm-2 " type="search" placeholder="Product Number" aria-label="Product Number">
-			<button id="search_button" class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+			<input id="input_num" class="form-control mr-sm-2" type="text" placeholder="Product Number" aria-label="Product Number">
+			<button id="search_button" class="btn btn-outline-light my-2 my-sm-0" type="button">Search</button>
 			<button id="logout_button" class="btn btn-link my-2 my-sm-0" type="reset">LogOut</button>
 			</form>
 		</nav>
-		
+	
+		<p id="remind_text">Enter Product Number!!!</p>
+
 		<div id="controller_state_block" class="mx-auto">
 			<p class="state_block_title">Sensor Module State</p>
 			<div class="container">
@@ -34,7 +36,7 @@
 						<p class="sensor_name text-left">CO2</p>
 					</div>
 					<div class="col col-lg-3">
-						<input type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
+						<input id="co2_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 					</div>
 				</div>
 
@@ -43,7 +45,7 @@
 						<p class="sensor_name text-left">PM2.5</p>
 					</div>
 					<div class="col col-lg-3">
-						<input type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
+						<input id="pm_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 					</div>
 				</div>
 
@@ -52,7 +54,7 @@
 						<p class="sensor_name text-left">Current</p>
 					</div>
 					<div class="col col-lg-3">
-						<input type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
+						<input id="current_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 					</div>
 				</div>
 
@@ -61,7 +63,7 @@
 						<p class="sensor_name text-left">Temperature</p>
 					</div>
 					<div class="col col-lg-3">
-						<input type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
+						<input id="temp_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 					</div>
 				</div>
 
