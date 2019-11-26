@@ -19,7 +19,7 @@ PORT = 11230 #web port
 
 '''-----Receive State-----'''
 received = 0 #check if received remote controller state information
-state = {'co2':'0' , 'pm':'0' , 'current':'0' , 'Temp':'0'}
+state = {'co2':'off' , 'pm':'off' , 'current':'off' , 'Temp':'off'}
 
 async def LoginPage(request):
     return web.FileResponse(FILE_PATH + '/login.html')
@@ -49,7 +49,7 @@ async def Send(request):
     '''-----MQTT Publish-----'''
     mqttc.publish(topic,message)
 
-    return web.Response(text="Hello World",content_type='text/html')
+    return web.Response(text="Data send",content_type='text/html')
 
 
 async def ControllerState(request):
@@ -73,33 +73,43 @@ async def WebsocketHandler(websocket, path):
 
 	global received
 	while True:
-		await asyncio.sleep(1)
-		if received == 1:
-			'''-----change dict to json format-----'''
-			json_str = json.dumps(state)
-			await websocket.send(json_str)
-			print("send message")
-			received = 0
-			break
+	    await asyncio.sleep(1)
+	    if received == 1:
+                '''-----change dict to json format-----'''
+                json_str = json.dumps(state)
+                await websocket.send(json_str)
+                print("send message")
+                received = 0
+                break
 
 async def Search(request):
     print("search")
     search_num = request.rel_url.query['product']
     print("search_num:"+search_num)
 
-	#verify product_number and on/off state in json file
+    #verify product_number and on/off state in json file
     with open('product_num.json','r') as f:
         product_dict = json.load(f)
     if (search_num in product_dict):
         if(product_dict[search_num] == 'on'):
-			#print("find product and it's used'")
-        	return web.Response(text="used",content_type='text/html')
+	    #print("find product and it's used'")
+            return web.Response(text="used",content_type='text/html')
         else:
-			#print("find product but not used")
+	    #print("find product but not used")
             return web.Response(text="not_used",content_type='text/html')
     else:
-		#print("no product")
+	#print("no product")
         return web.Response(text="no",content_type='text/html')
+
+async def ToggleChange(request):
+    print("togglechange");
+    sensor = request.rel_url.query['sensor']
+    sensor_state = request.rel_url.query['state']
+    print("sensor: " + sensor + "  state: " + sensor_state)
+    
+    '''MQTT Publish'''
+    mqttc.publish(sensor,sensor_state)
+    return web.Response(text="ok",content_type='text/html')
 
 
 async def init(loop):
@@ -112,6 +122,7 @@ async def init(loop):
     app.router.add_get('/login', Login)
     app.router.add_get('/state', ControllerState)
     app.router.add_get('/search', Search)
+    app.router.add_get('/togglechange',ToggleChange)
     srv = await loop.create_server(app._make_handler(),host='0.0.0.0', port=PORT)
     print("server created")
     return srv
@@ -127,10 +138,8 @@ if __name__ == '__main__':
         '''-----Websocket serve create-----'''		
         websocket_serv = websockets.serve(WebsocketHandler,IP , WebsocketPort)
 
-        '''-----Initialize State dict-----'''
-		#global state
-		#state = {'co2':'0', 'pm':'0','current':'0','Temp':'0'}
-	
+        print("initial received:"+str(received))
+
         loop.run_until_complete(init(loop))
         loop.run_until_complete(websocket_serv)
 

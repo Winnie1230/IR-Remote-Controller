@@ -18,7 +18,9 @@ $(document).ready(()=>{
 	console.log("document ready");
 });
 
+var first_loaded = 0 /*check if sensor data is first_loaded*/
 $("#search_button").click(()=>{
+	first_loaded = 0
 	product_num = $("#input_num").val();
 	console.log(product_num);
 
@@ -43,6 +45,8 @@ $("#search_button").click(()=>{
 	
 		$("#temp_toggle").bootstrapToggle('enable');
 		$("#temp_toggle").bootstrapToggle(received_msg.Temp);
+		
+		first_loaded = 1;
 	}
 
 	ws.onclose = function(evt){
@@ -96,6 +100,95 @@ function SetDisable(){
 		$("#temp_toggle").bootstrapToggle('on');
 		$("#temp_toggle").bootstrapToggle('disable');
 }
+
+$("#co2_toggle").change(()=>{
+    if(first_loaded == 1){
+    	console.log("co2_change");
+
+    	$("#co2_toggle").prop('checked') ? sensor_state="on" : sensor_state="off";
+
+    	$.ajax({
+	    url: "/togglechange?"+"sensor=co2"+"&state="+sensor_state,
+            type: 'GET',
+	    data: {
+		    //user_name: $('#user_name').val()
+	    },
+	    error: function(xhr) {
+		alert('Ajax request 發生錯誤');
+	    },
+	    success: function(response) {
+		console.log(response);
+	    }
+        });
+    }
+})
+
+$("#pm_toggle").change(()=>{
+    if(first_loaded == 1){
+    	console.log("pm_change");
+
+    	$("#pm_toggle").prop('checked') ? sensor_state="on" : sensor_state="off";
+
+    	$.ajax({
+	    url: "/togglechange?"+"sensor=pm"+"&state="+sensor_state,
+            type: 'GET',
+	    data: {
+		    //user_name: $('#user_name').val()
+	    },
+	    error: function(xhr) {
+		alert('Ajax request 發生錯誤');
+	    },
+	    success: function(response) {
+		console.log(response);
+	    }
+        });
+    }
+
+})
+
+$("#current_toggle").change(()=>{
+    if(first_loaded == 1){
+    	console.log("current_change");
+
+    	$("#current_toggle").prop('checked') ? sensor_state="on" : sensor_state="off";
+
+    	$.ajax({
+	    url: "/togglechange?"+"sensor=current"+"&state="+sensor_state,
+            type: 'GET',
+	    data: {
+		    //user_name: $('#user_name').val()
+	    },
+	    error: function(xhr) {
+		alert('Ajax request 發生錯誤');
+	    },
+	    success: function(response) {
+		console.log(response);
+	    }
+        });
+    }
+})
+
+$("#temp_toggle").change(()=>{
+    if(first_loaded == 1){
+    	console.log("temp_change");
+
+    	$("#temp_toggle").prop('checked') ? sensor_state="on" : sensor_state="off";
+
+    	$.ajax({
+	    url: "/togglechange?"+"sensor=temp"+"&state="+sensor_state,
+            type: 'GET',
+	    data: {
+		    //user_name: $('#user_name').val()
+	    },
+	    error: function(xhr) {
+		alert('Ajax request 發生錯誤');
+	    },
+	    success: function(response) {
+		console.log(response);
+	    }
+        });
+    }
+})
 
 $("#send_button").click(()=>{
     send_topic = $("#input_topic").val();
