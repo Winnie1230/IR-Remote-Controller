@@ -24,11 +24,16 @@ $("#search_button").click(()=>{
     console.log(product_num);
     
     if(product_num){
-
         /*-----Create js Websocket-----*/
         var ws = new WebSocket("ws://nckuwinnieliu.ddns.net:8765");
+		var result = -1;
+
         ws.onopen = function(){
             console.log("connected");
+			if(result == 1 || result == 2){
+				ws.close();
+				console.log(ws.readyState);
+			}
         }
         ws.onmessage = function(evt){
             if(evt.data == "timeout")
@@ -57,10 +62,6 @@ $("#search_button").click(()=>{
 	        }
         }
 
-        ws.onclose = function(evt){
-	        console.log("Disconnect");
-         }
-
         /*-----clear input num-----*/
         $("#input_num").val("");
 		
@@ -80,19 +81,24 @@ $("#search_button").click(()=>{
 	        if (response == "used"){
 			    $("#remind_text").text("Find Product! Loading its state...");
 			    SetDisable();
+				result = 0;
 	        }
 	        else if(response == "not_used"){
 			    $("#remind_text").text("Product is not being used.");
 			    SetDisable();
-			    ws.close();
+				result = 1;
 	        }
 	        else if(response == "no"){
 			    $("#remind_text").text("No product number");
 			    SetDisable();
-			    ws.close();
+				result = 2;
 	        }
 	    }
         });
+		
+		ws.onclose = function(evt){
+	        console.log("Disconnect");
+        }
     }
     else{
         $.alert({

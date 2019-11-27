@@ -20,48 +20,22 @@ p{
 #remind_text{
 	font-size: 20px;
 	color: #000000;
-	margin-left: 20px;
-    margin-bottom: 40px;
-}
-
-#change_state_block{
-    //width: 20%;
-    height: 50%;
-    border: 2px #888888 solid;
-    border-radius: 10px;
-    //background-color: #CCDDFF;
-    margin-left: 70px;
-    margin-right: 70px;
-    padding-top: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-	padding-bottom: 20px;
-    float: left;
-    overflow: auto;
-}
-
-#change_state_title{
-    font-size: 25px;
-    padding-bottom: 10px;
+	margin-left: 10px;
 }
 
 #controller_state_block{
-    //width: 28%;
+    width: 28%;
     height: auto;
     border: 2px #888888 solid;
     border-radius: 10px;
     //background-color: #CCDDFF;
-    margin-left: 70px;
-    margin-right: 70px;
+    margin-left: 40px;
+    margin-right: 40px;
     padding-top: 10px;
     padding-left: 20px;
     padding-right: 20px;
 	padding-bottom: 20px;
     overflow: auto;
-}
-
-#reload_button{
-    margin-top: 12px;
 }
 
 .state_block_title{

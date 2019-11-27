@@ -3,8 +3,8 @@ import paho.mqtt.client as mqtt
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    #client.subscribe("esp8266")
-    client.subscribe("co2")
+    client.subscribe("aaa/web/SensorState")
+    client.subscribe("aaa/web/#")
     client.subscribe("pm")
     client.subscribe("current")
     client.subscribe("temp")

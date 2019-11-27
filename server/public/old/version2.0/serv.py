@@ -18,13 +18,7 @@ MAIN_INDEX = '/index.html'
 PORT = 11230 #web port
 
 '''-----Set TimeOut for Receiving Data from ESP8266-----'''
-TIME_OUT = 5 #10 sec
-
-'''-----Search Product Num Result-----'''
-search_result = 0
-#search_result = 0 => product number is used
-#search_result = 1 => product number is in the list but it is not used
-#search_result = 2 => product number is not in the list
+TIME_OUT = 10 #10 sec
 
 '''-----Receive State-----'''
 received = 0 #check if received remote controller state information
@@ -51,20 +45,14 @@ async def Login(request):
 async def Send(request):
     #await asyncio.sleep(1)
     print("send")
-    product_num = request.rel_url.query['product']
-    sensor = request.rel_url.query['topic']
-    state = request.rel_url.query['message']
-    state = "1" if state == "on" else "0"
-    #state = 1 => turn on sensor
-    #state = 0 => turn off sensor
-
-    print("product: "+ product_num + "  sensor:" + sensor + "  state:" + state)
+    topic = request.rel_url.query['topic']
+    message = request.rel_url.query['message']
+    print("topic:" + topic + "  message:" + message)
     
     '''-----MQTT Publish-----'''
-    mqttc.publish(product_num+"/web/"+sensor,state)
-    #product_number/web/sensor
+    mqttc.publish(topic,message)
 
-    return web.Response(text="Change sent",content_type='text/html')
+    return web.Response(text="Data send",content_type='text/html')
 
 
 async def ControllerState(request):
@@ -79,7 +67,7 @@ async def ControllerState(request):
     state['Temp'] = request.rel_url.query['temp']
 
     print(state)
-    return web.Response(text="State Received",content_type='text/html')
+    return web.Response(text="Hello World",content_type='text/html')
 
 
 async def WebsocketHandler(websocket, path):
@@ -89,29 +77,22 @@ async def WebsocketHandler(websocket, path):
     global received
     counter = 0
     while True:
-        if search_result == 1 or search_result == 2:
-            print("Connection is closed")
+        await asyncio.sleep(1)
+        counter += 1
+        if counter > TIME_OUT:
+            await websocket.send("timeout")
+            print("Time out and try again")
             break
-        else: #result = 0
-            await asyncio.sleep(1)
-            counter += 1
- 
-            if counter > TIME_OUT:
-                await websocket.send("timeout")
-                print("Time out and try again")
+        else:
+            if received == 1:
+                '''-----change dict to json format-----'''
+                json_str = json.dumps(state)
+                await websocket.send(json_str)
+                print("send message")
+                received = 0
                 break
-            else:
-                if received == 1:
-                    #-----change dict to json format-----
-                    json_str = json.dumps(state)
-                    await websocket.send(json_str)
-                    print("send message")
-                    received = 0
-                    break
- 
+
 async def Search(request):
-    global search_result
-    search_result = -1
     print("search")
     search_num = request.rel_url.query['product']
     print("search_num:"+search_num)
@@ -121,46 +102,24 @@ async def Search(request):
         product_dict = json.load(f)
     if (search_num in product_dict):
         if(product_dict[search_num] == 'on'):
-	        #print("find product and it's used'")
-            search_result = 0
-            '''Publish MQTT message to ESP8266 for sensor state'''
-            mqttc.publish(search_num+"/web/SensorState","1")
-            #product_num/web/SensorState
-            #"1"=> tell esp8266 to return sensors' state
-
+	    #print("find product and it's used'")
             return web.Response(text="used",content_type='text/html')
         else:
-	        #print("find product but not used")
-            search_result = 1
+	    #print("find product but not used")
             return web.Response(text="not_used",content_type='text/html')
     else:
-	    #print("no product")
-        search_result = 2
+	#print("no product")
         return web.Response(text="no",content_type='text/html')
 
-'''
 async def ToggleChange(request):
     print("togglechange");
     sensor = request.rel_url.query['sensor']
     sensor_state = request.rel_url.query['state']
     print("sensor: " + sensor + "  state: " + sensor_state)
     
-    #MQTT Publish
+    '''MQTT Publish'''
     mqttc.publish(sensor,sensor_state)
     return web.Response(text="change sent",content_type='text/html')
-'''
-
-async def Reload(request):
-    print("reload")
-    reload_num = request.rel_url.query['product']
-    print("reload_num: "+reload_num)
-    
-    '''Publish MQTT message for ESP8266 sensors' states'''
-    mqttc.publish(reload_num+"/web/SensorState","1")
-    #product_num/web/SensorState
-    #"1"=>tell esp8266 to return sensors' states
-
-    return web.Response(text="reloading",content_type='text/html')
 
 
 async def init(loop):
@@ -173,8 +132,7 @@ async def init(loop):
     app.router.add_get('/login', Login)
     app.router.add_get('/state', ControllerState)
     app.router.add_get('/search', Search)
-    #app.router.add_get('/togglechange',ToggleChange)
-    app.router.add_get('/reload',Reload)
+    app.router.add_get('/togglechange',ToggleChange)
     srv = await loop.create_server(app._make_handler(),host='0.0.0.0', port=PORT)
     print("server created")
     return srv
