@@ -8,11 +8,7 @@
 }
 
 .navbar_setting{
-    margin-bottom: 10px;
-}
-
-#initial_button{
-    margin-right: 30px;
+    margin-bottom: 20px;
 }
 
 p{
@@ -25,7 +21,7 @@ p{
 	font-size: 20px;
 	color: #000000;
 	margin-left: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 40px;
 }
 
 #change_state_block{
@@ -64,13 +60,8 @@ p{
     overflow: auto;
 }
 
-.sensor_state{
-    width: 60px;
-    //font-family: comic sans ms;
-}
-
 #reload_button{
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .state_block_title{

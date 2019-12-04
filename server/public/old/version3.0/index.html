@@ -21,18 +21,13 @@
    </head>
 	<body>
 		<nav class="navbar navbar-dark bg-dark navbar_setting">
-            <a class="navbar-brand" id="web_title" href="#">Websocket</a>
-			<!--p id="web_title">Websocket</p-->
-			
-            <form class="form-inline my-2 my-lg-0">
-				
-				<button id="initial_button" class="btn btn-outline-info my-2 my-sm-0" type="button">Initial</button>
-                <input id="input_num" class="form-control mr-sm-2" type="text" placeholder="Product Number" aria-label="Product Number">
+			<p id="web_title">Websocket</p>
+			<form class="form-inline">
+				<input id="input_num" class="form-control mr-sm-2" type="text" placeholder="Product Number" aria-label="Product Number">
 				<button id="search_button" class="btn btn-outline-light my-2 my-sm-0" type="button">Search</button>
 				<button id="logout_button" class="btn btn-link my-2 my-sm-0" type="reset">LogOut</button>
 			</form>
-		
-        </nav>
+		</nav>
 	
 		<p id="remind_text">Enter Product Number!!!</p>
 	
@@ -52,13 +47,9 @@
 								<select class="custom-select" id="sensor_list" disabled>
                                     <option selected disabled>select sensor</option>
                                     <option value="co2">CO2</option>
-                                    <option value="pm2.5">PM2.5</option>
-                                    <option value="pm10">PM10</option>
-                                    <option value="hcho">HCHO</option>
-                                    <option value="tvoc">TVOC</option>
-                                    <option value="humid">Humid</option>
-                                    <option value="temp">Temperature</option>
+                                    <option value="pm">PM2.5</option>
                                     <option value="current">Current</option>
+                                    <option value="temp">Temperature</option>
 								</select>				
 					
 							</div>
@@ -98,9 +89,7 @@
 								<p class="sensor_name text-left">CO2</p>
 							</div>
 							<div class="col col-lg-3">
-								<h3>
-									<span id="co2_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
+								<input id="co2_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 							</div>
 						</div>
 
@@ -109,85 +98,28 @@
 								<p class="sensor_name text-left">PM2.5</p>
 							</div>
 							<div class="col col-lg-3">
-								<h3>
-									<span id="pm2_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
+								<input id="pm_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 							</div>
 						</div>
-
-
- 						<div class="row">
-							<div class="col col-lg-7">
-								<p class="sensor_name text-left">PM10</p>
-							</div>
-							<div class="col col-lg-3">
-								<h3>
-									<span id="pm10_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
-	
-							</div>
-						</div>
-
- 						<div class="row">
-							<div class="col col-lg-7">
-								<p class="sensor_name text-left">HCHO</p>
-							</div>
-							<div class="col col-lg-3">
-								<h3>
-									<span id="hcho_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
-							</div>
-						</div>
-
-
-  						<div class="row">
-							<div class="col col-lg-7">
-								<p class="sensor_name text-left">TVOC</p>
-							</div>
-							<div class="col col-lg-3">
-								<h3>
-									<span id="tvoc_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
-							</div>
-						</div>
-                       
-                        
-						<div class="row">
-							<div class="col col-lg-7">
-								<p class="sensor_name text-left">Humid</p>
-							</div>
-							<div class="col col-lg-3">
-								<h3>
-									<span id="humid_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
-							</div>
-						</div>
-
-
-						<div class="row">
-							<div class="col col-lg-7">
-								<p class="sensor_name text-left">Temperature</p>
-							</div>
-							<div class="col col-lg-3">
-								<h3>
-									<span id="temp_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
-							</div>
-						</div>
-
 
 						<div class="row">
 							<div class="col col-lg-7">
 								<p class="sensor_name text-left">Current</p>
 							</div>
 							<div class="col col-lg-3">
-								<h3>
-									<span id="current_state" class="sensor_state badge badge-danger">OFF</span>	
-                                </h3>
+								<input id="current_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col col-lg-7">
+								<p class="sensor_name text-left">Temperature</p>
+							</div>
+							<div class="col col-lg-3">
+								<input id="temp_toggle" disabled type="checkbox" checked data-toggle="toggle" data-on="ON" data-off="OFF" data-onstyle="success" data-offstyle="danger" data-height="30" data-width="80">
 							</div>
 						</div>
                         
-
 						<div class="row align-items-end">
 							<div class="col-md-3 ml-auto">
 								<button type="button" disabled id="reload_button" class="btn btn-outline-secondary">Reload</button> 
@@ -206,7 +138,6 @@
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
-        <script src="https://kit.fontawesome.com/af046df13d.js" crossorigin="anonymous"></script>
 		<script src="./js/index.js"></script>
 	</body>
 </html>
