@@ -11,10 +11,6 @@
     margin-bottom: 10px;
 }
 
-#initial_button{
-    margin-right: 30px;
-}
-
 p{
     font-family: comic sans ms;
     font-weight: bold;
@@ -35,7 +31,7 @@ p{
     border-radius: 10px;
     //background-color: #CCDDFF;
     margin-left: 70px;
-    margin-right: 70px;
+    margin-right: 50px;
     padding-top: 10px;
     padding-left: 20px;
     padding-right: 20px;
@@ -44,9 +40,32 @@ p{
     overflow: auto;
 }
 
+#send_button{
+    margin-top: 20px;
+}
+
 #change_state_title{
     font-size: 25px;
     padding-bottom: 10px;
+}
+
+#initial_block{
+    //width: auto;
+    height: 50%;
+    border: 2px #888888 solid;
+    border-radius: 10px;
+    //background-color: #CCDDFF;
+    margin-top: 30px;
+    margin-left: 70px;
+    margin-right: 50px;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 85px;
+	padding-bottom: 20px;
+}
+
+#initial_title{
+    font-size: 25px;
 }
 
 #controller_state_block{

@@ -4,7 +4,7 @@ import paho.mqtt.client as mqtt
 import json
 import websockets
 
-IP = "nckuwinnieliu.ddns.net"
+IP = "winnieliu.ddns.net"
 
 '''-----MQTT Server Setting-----'''
 MQTTServerPort = 1883
@@ -20,15 +20,26 @@ PORT = 11230 #web port
 '''-----Set TimeOut for Receiving Data from ESP8266-----'''
 TIME_OUT = 5 #10 sec
 
+'''-----Websocket return data type-----'''
+websocket_data_type = 0
+#websocket_data_type = 1 -> return sensor state
+#websocket_data_type = 2 -> reuturn initial check result
+
 '''-----Search Product Num Result-----'''
 search_result = 0
-#search_result = 0 => product number is used
-#search_result = 1 => product number is in the list but it is not used
-#search_result = 2 => product number is not in the list
+#search_result = 0 -> product number is used
+#search_result = 1 -> product number is in the list but it is not used
+#search_result = 2 -> product number is not in the list
 
 '''-----Receive State-----'''
 received = 0 #check if received remote controller state information
-state = {'co2':'off' , 'pm':'off' , 'current':'off' , 'Temp':'off'}
+timeout = 0
+connected = 0 #check if websocket is connected
+#if timeout and received controller state information, then the state cannot be saved
+state = {'co2':'off' , 'pm2.5':'off' , 'pm10':'off' , 'hcho':'off' , 'tvoc':'off' , 'humid':'off' , 'temp':'off' , 'current':'off'}
+initial_result = 0
+#initial_result = 1 -> sucess
+#initial_result = 0 -> error
 
 async def LoginPage(request):
     return web.FileResponse(FILE_PATH + '/login.html')
@@ -52,66 +63,98 @@ async def Send(request):
     #await asyncio.sleep(1)
     print("send")
     product_num = request.rel_url.query['product']
-    sensor = request.rel_url.query['topic']
-    state = request.rel_url.query['message']
-    state = "1" if state == "on" else "0"
-    #state = 1 => turn on sensor
-    #state = 0 => turn off sensor
+    sensor = request.rel_url.query['sensor']
+    state[sensor] = request.rel_url.query['change']   
+    #state_change = 1 => turn on sensor
+    #state_change = 0 => turn off sensor
 
-    print("product: "+ product_num + "  sensor:" + sensor + "  state:" + state)
+    print("product: "+ product_num + "  sensor:" +sensor+ "  state:"+state[sensor])
+    
+    message = ''
+
+    sensor = ['co2','pm2.5','pm10','hcho','tvoc','humid','temp','current']
+    for i in sensor:
+        message += '1' if state[i] == 'on' else '0'
+    print("message:", message)
     
     '''-----MQTT Publish-----'''
-    mqttc.publish(product_num+"/web/"+sensor,state)
+    mqttc.publish(product_num+"/Web/SensorChange",message)
     #product_number/web/sensor
 
     return web.Response(text="Change sent",content_type='text/html')
 
 
 async def ControllerState(request):
-    print("executed")
-    global received, state
-    received = 1
-    
-    '''-----Update Remote Controller State-----'''
-    state['co2'] = request.rel_url.query['co2']
-    state['pm'] = request.rel_url.query['pm']
-    state['current'] = request.rel_url.query['current']
-    state['Temp'] = request.rel_url.query['temp']
+    print("controllerstate")
+    if timeout or (not connected):
+        return web.Response(text="Timeout or Websocket is not connected",content_type='text/html')
+    else:
+        global received, state, websocket_data_type
+        received = 1
+        websocket_data_type = 1
 
-    print(state)
-    return web.Response(text="State Received",content_type='text/html')
+        '''-----Update Remote Controller State-----'''
+        #state = "1" if state == "on" else "0"
+        state['co2'] = 'on' if request.rel_url.query['co2'] == '1' else 'off'
+        state['pm2.5'] = 'on' if request.rel_url.query['pm2.5'] == '1' else 'off'
+        state['pm10'] = 'on' if request.rel_url.query['pm10'] == '1' else 'off'
+        state['hcho'] = 'on' if request.rel_url.query['hcho'] == '1' else 'off'
+        state['tvoc'] = 'on' if request.rel_url.query['tvoc'] == '1' else 'off'
+        state['humid'] = 'on' if request.rel_url.query['humid'] == '1' else 'off'
+        state['temp'] = 'on' if request.rel_url.query['temp'] == '1' else 'off'
+        state['current'] = 'on' if request.rel_url.query['current'] == '1' else 'off'
+
+        print(state)
+        return web.Response(text="State Received",content_type='text/html')
 
 
 async def WebsocketHandler(websocket, path):
     '''-----Test Code-----'''
     print("connected")
 
-    global received
+    global received, timeout, connected, websocket_data_type
+    timeout = 0
     counter = 0
+    connected = 1 #this handler function is executed when websocket is connected
+    websocket_data_type = 0
+
     while True:
         if search_result == 1 or search_result == 2:
             print("Connection is closed")
+            connected = 0
+            received = 0
             break
-        else: #result = 0
+        else: #search_result = 0
             await asyncio.sleep(1)
             counter += 1
- 
+            #print(counter)
             if counter > TIME_OUT:
                 await websocket.send("timeout")
                 print("Time out and try again")
+                timeout = 1
+                received = 0
+                connected = 0
                 break
             else:
                 if received == 1:
-                    #-----change dict to json format-----
-                    json_str = json.dumps(state)
-                    await websocket.send(json_str)
-                    print("send message")
-                    received = 0
-                    break
+                    if websocket_data_type == 1:
+                        #-----change dict to json format-----
+                        json_str = json.dumps(state)
+                        await websocket.send(json_str)
+                        print("send state message")
+                        received = 0
+                        connected = 0
+                        break
+                    elif websocket_data_type == 2:
+                        await websocket.send(initial_result)
+                        print("send initial result")
+                        received = 0
+                        connected = 0
+                        break
+
  
 async def Search(request):
     global search_result
-    search_result = -1
     print("search")
     search_num = request.rel_url.query['product']
     print("search_num:"+search_num)
@@ -124,7 +167,8 @@ async def Search(request):
 	        #print("find product and it's used'")
             search_result = 0
             '''Publish MQTT message to ESP8266 for sensor state'''
-            mqttc.publish(search_num+"/web/SensorState","1")
+            print("search sensorstate")
+            mqttc.publish(search_num+"/Web/SensorState","1")
             #product_num/web/SensorState
             #"1"=> tell esp8266 to return sensors' state
 
@@ -156,11 +200,34 @@ async def Reload(request):
     print("reload_num: "+reload_num)
     
     '''Publish MQTT message for ESP8266 sensors' states'''
-    mqttc.publish(reload_num+"/web/SensorState","1")
+    mqttc.publish(reload_num+"/Web/SensorState","1")
     #product_num/web/SensorState
     #"1"=>tell esp8266 to return sensors' states
 
     return web.Response(text="reloading",content_type='text/html')
+
+async def Initial(request):
+    print("initial")
+    initial_num = request.rel_url.query['product']
+    print("initial_num: ",initial_num)
+
+    '''Publish MQTT message to initialize ESP8266'''
+    mqttc.publish(initial_num+"/Web/Initial","1")
+
+    return web.Response(text="initializing",content_type='text/html')
+
+async def InitialCheck(request):
+    print('initial check')
+    global received, websocket_data_type, initial_result
+    received = 1
+    websocket_data_type = 2
+    initial_result = request.rel_url.query['result']
+
+    if initial_result == '1':
+        print('initial sucess')
+    else:
+        print('initial error')
+    return web.Response(text="ok",content_type='text/html')
 
 
 async def init(loop):
@@ -175,6 +242,8 @@ async def init(loop):
     app.router.add_get('/search', Search)
     #app.router.add_get('/togglechange',ToggleChange)
     app.router.add_get('/reload',Reload)
+    app.router.add_get('/initial', Initial)
+    app.router.add_get('/initialcheck',InitialCheck)
     srv = await loop.create_server(app._make_handler(),host='0.0.0.0', port=PORT)
     print("server created")
     return srv

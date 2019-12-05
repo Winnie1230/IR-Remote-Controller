@@ -52,6 +52,24 @@ $("#search_button").click(()=>{
 		    	$("#sensor_list").prop('disabled',false);
 			    $("#on_off_list").prop('disabled',false);
 			    $("#send_button").prop('disabled',false);
+	            $("#initial_button").prop('disabled',false);
+
+                $.confirm({
+                    icon: 'far fa-bell',
+                    title: 'Remind',
+                    content: 'Remember to initialize esp8266 if first used.',
+                    type: 'orange',
+                    typeAnimated: true,
+                    closeIcon: true,
+                    theme: 'modern',
+                    buttons: {
+                        ok: {
+                            text: 'OK',
+                            btnClass: 'btn-orange',
+                            action: function(){},
+                        },
+                    }
+                });
 	        }
         }
 
@@ -208,6 +226,7 @@ function SetDisable(){
 	$("#sensor_list").prop('disabled',true);
 	$("#on_off_list").prop('disabled',true);
 	$("#send_button").prop('disabled',true);
+	$("#initial_button").prop('disabled',true);
 }
 
 $("#sensor_list").change(()=>{
@@ -234,7 +253,7 @@ $("#send_button").click(()=>{
 
 	if(send_topic && send_message){
 		$.ajax({
-				url: "/send?"+"product="+product_num+"&topic="+send_topic+"&message="+send_message,
+				url: "/send?"+"product="+product_num+"&sensor="+send_topic+"&change="+send_message,
 				type: 'GET',
 				data: {
 					//user_name: $('#user_name').val()
@@ -288,6 +307,68 @@ $("#send_button").click(()=>{
         $("#on_off_list").prop('selectedIndex',0);
 	}
 })
+
+$("#initial_button").click(()=>{
+    $("#remind_text").text("Initializing  " + product_num + "...");
+	        
+    var ws = new WebSocket("ws://winnieliu.ddns.net:8765");
+    
+    ws.onopen = function(){
+        console.log("connected");
+    }
+  
+    ws.onmessage = function(evt){
+        if(evt.data == "timeout"){
+	        $.alert({
+                theme: 'modern',
+                icon: 'fa fa-warning',
+                columnClass: 'col-md-5 col-md-offset-5',
+                //columnClass: 'large',
+                closeIcon: true,
+                type: 'red',
+                typeAnimated: true,
+                title: 'Alert!',
+                content: 'Time Out!!! Please Initialize Again.',
+            });
+            $("#remind_text").text("Time Out!!! Please Initialize again.");
+        }
+        else if(evt.data == '1'){
+            $("#remind_text").text("Initial Complete");
+        }
+        else{
+            $("#remind_text").text("Initial Error");
+        
+        	$.alert({
+                theme: 'modern',
+                icon: 'fa fa-warning',
+                columnClass: 'col-md-5 col-md-offset-4',
+                closeIcon: true,
+                title: 'Alert! Initializing Error',
+                content: 'Please Press Initial Button to Initialize Again.<br>',
+                type: 'red',
+                typeAnimated: true,
+            });
+        }
+    }
+
+    ws.onclose = function(evt){
+        console.log("Disconnect");
+    }
+
+    $.ajax({
+		url: "/initial?"+"product="+product_num,
+		type: 'GET',
+		data: {
+			//user_name: $('#user_name').val()
+		},
+		error: function(xhr) {
+			alert('Ajax request 發生錯誤');
+		},
+		success: function(response) {
+			console.log(response);
+        }
+    });
+});
 
 $("#logout_button").click(()=>{
     $.confirm({
