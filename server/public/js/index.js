@@ -127,13 +127,13 @@ $("#search_button").click(()=>{
  });
 
 function SetState(received_msg){
-    var sensor_tag = ["#co2_state","#pm2.5_state","#pm10_state","#hcho_state","#tvoc_state","#humid_state","#temp_state","#current_state"];
+    var sensor_tag = ["#co2_state","#pm2_state","#pm10_state","#hcho_state","#tvoc_state","#humid_state","#temp_state","#current_state"];
     var sensor = ["co2","pm2.5","pm10","hcho","tvoc","humid","temp","current"];
 
     for(var i = 0; i < 8; i++){
         var state = received_msg[sensor[i]]; //received state
         var tag = sensor_tag[i]; //sensor_tag
-        /*-----set sensor state-----*/
+
         if(state == "on"){
             if($(tag).text() == "OFF"){
                 $(tag).text("ON");
@@ -210,7 +210,7 @@ $("#reload_button").click(()=>{
 });
 
 function SetDisable(){
-    var sensor_tag = ["#co2_state","#pm2.5_state","#pm10_state","#hcho_state","#tvoc_state","#humid_state","#temp_state","#current_state"];
+    var sensor_tag = ["#co2_state","#pm2_state","#pm10_state","#hcho_state","#tvoc_state","#humid_state","#temp_state","#current_state"];
 
     for(var i = 0; i < 8; i++){
         var tag = sensor_tag[i]; //sensor_tag
