@@ -2,11 +2,12 @@ var WebSocket_Host = "ws://winnieliu.ddns.net:8765"
 var port = 11230
 /*-----Create js Websocket-----*/
 //var ws = new WebSocket("ws://nckuwinnieliu.ddns.net:8765");
+
 $(document).ready(()=>{
 	console.log("document ready");
 });
 
-var product_num = "";
+var product_num = ""
 
 $("#search_button").click(()=>{
     product_num = $("#input_num").val();
@@ -36,7 +37,7 @@ $("#search_button").click(()=>{
                     typeAnimated: true,
  
                     title: 'Alert!',
-                    content: '<strong>Time Out!!! Please Search Product Number again.</strong>',
+                    content: 'Time Out!!! Please Search Product Number again.',
                 });
                 $("#remind_text").text("Time Out!!! Please enter Product Number again.");
             }
@@ -54,31 +55,27 @@ $("#search_button").click(()=>{
 	            $("#initial_button").prop('disabled',false);
 
                 $.confirm({
-                    icon: 'far fa-check-circle',
-                    title: 'Data loading completed!',
-                    content:'<strong style="font-size:18px; color:#666666;">Remember to initialize esp8266 if first used.</strong>',
-                    type: 'green',
+                    icon: 'far fa-bell',
+                    title: 'Remind',
+                    content: 'Remember to initialize esp8266 if first used.',
+                    type: 'orange',
                     typeAnimated: true,
                     closeIcon: true,
                     theme: 'modern',
-                    columnClass: 'col-md-5 col-md-offset-3',
                     buttons: {
                         ok: {
                             text: 'OK',
-                            btnClass: 'btn-green',
+                            btnClass: 'btn-orange',
                             action: function(){},
                         },
                     }
                 });
 	        }
-            $("#loading_gif").css("visibility","hidden");
         }
 
         /*-----clear input num-----*/
-        //$("#input_num").val("");
-	
-        /*-----remain input num----*/
-
+        $("#input_num").val("");
+		
         $.ajax({
 	    url: "/search?"+"product="+product_num,
 	    type: 'GET',
@@ -94,9 +91,7 @@ $("#search_button").click(()=>{
 			
 	        if (response == "used"){
 			    $("#remind_text").text("Find Product! Loading its state...");
-                $("#loading_gif").css("visibility","visible");
-
-                SetDisable();
+			    SetDisable();
 				result = 0;
 	        }
 	        else if(response == "not_used"){
@@ -126,14 +121,10 @@ $("#search_button").click(()=>{
             //typeAnimated: true,
  
             title: "Alert!",
-            content: "<strong>Enter Product Number!!!</strong>",
+            content: "Enter Product Number!!!",
         })
     }
  });
-
-$("#input_num").click(()=>{
-    $("#input_num").select();
-})
 
 function SetState(received_msg){
     var sensor_tag = ["#co2_state","#pm2_state","#pm10_state","#hcho_state","#tvoc_state","#humid_state","#temp_state","#current_state"];
@@ -162,7 +153,6 @@ function SetState(received_msg){
 
 function ReloadFunc(){
     console.log(product_num);
-    $("#loading_gif").css('visibility','visible')
 	//$("#remind_text").text("Reload States!!!");
 
     /*-----Create js Websocket-----*/
@@ -178,8 +168,7 @@ function ReloadFunc(){
                 columnClass: 'col-md-5 col-md-offset-4',
                 closeIcon: true,
                 title: 'Alert! Reload Time Out!!!',
-                content: '<strong>Please Press Reload Button to Reload States.</strong>',
-                //content: 'Please Press Reload Button to Reload States.<br>'+'1',
+                content: 'Please Press Reload Button to Reload States.<br>',
                 type: 'red',
                 typeAnimated: true,
             });
@@ -193,11 +182,10 @@ function ReloadFunc(){
             $("#remind_text").text("Data Loading Finish!!!");
 			SetState(received_msg);
 	    }
-        $("#loading_gif").css("visibility","hidden");
     }
 
     ws.onclose = function(evt){
-	    console.log("Disconnect");
+	console.log("Disconnect");
     }
 		
     $.ajax({
@@ -217,8 +205,7 @@ function ReloadFunc(){
 }
 
 $("#reload_button").click(()=>{
-    $("#remind_text").text("Reload States...");
-    //$("#loading_gif").css("visibility","visible");
+    $("#remind_text").text("Reload States!!!");
     ReloadFunc();
 });
 
@@ -242,20 +229,13 @@ function SetDisable(){
 	$("#initial_button").prop('disabled',true);
 }
 
-//if sensor_list value has changed
 $("#sensor_list").change(()=>{
-    console.log("sensor_list change");
+    console.log("change");
     $("#sensor_list").blur();
 })
 
 $("#sensor_list").focus(()=>{
     $("#sensor_list").val('');
-})
-
-$("#sensor_list").focusout(()=>{
-    if($("#sensor_list").val() == null){
-        $("#sensor_list").prop('selectedIndex',0); 
-    }
 })
 
 $("#on_off_list").change(()=>{
@@ -266,18 +246,12 @@ $("#on_off_list").focus(()=>{
     $("#on_off_list").val('');
 })
 
-$("#on_off_list").focusout(()=>{
-    if($("#on_off_list").val() == null){
-        $("#on_off_list").prop('selectedIndex',0); 
-    }
-})
-
 $("#send_button").click(()=>{
     send_topic = $("#sensor_list").val();
     send_message = $("#on_off_list").val();
+    $("#remind_text").text("Data Sent. Reloading States.");
 
 	if(send_topic && send_message){
-        $("#remind_text").text("Data Sent. Reloading States...");
 		$.ajax({
 				url: "/send?"+"product="+product_num+"&sensor="+send_topic+"&change="+send_message,
 				type: 'GET',
@@ -325,15 +299,10 @@ $("#send_button").click(()=>{
     }
 	else{
 		$.alert({
-            icon: 'fa fa-warning',
-            theme: 'modern',
-            type: 'red',
-            typeAnimated: true,
 			title: "Alert!",
-			content: "<strong>Please choose sensor and its state!</strong>",
+			content: "Please choose sensor and its state!",
 
 		});
-        $("#remind_text").text("Please choose sensor and its state!");
         $("#sensor_list").prop('selectedIndex',0);
         $("#on_off_list").prop('selectedIndex',0);
 	}
@@ -341,8 +310,7 @@ $("#send_button").click(()=>{
 
 $("#initial_button").click(()=>{
     $("#remind_text").text("Initializing  " + product_num + "...");
-	$("#loading_gif").css('visibility','visible');
-
+	        
     var ws = new WebSocket("ws://winnieliu.ddns.net:8765");
     
     ws.onopen = function(){
@@ -356,32 +324,29 @@ $("#initial_button").click(()=>{
                 icon: 'fa fa-warning',
                 columnClass: 'col-md-5 col-md-offset-5',
                 //columnClass: 'large',
-                //closeIcon: true,
+                closeIcon: true,
                 type: 'red',
                 typeAnimated: true,
                 title: 'Alert!',
-                content: '<strong>Time Out!!! Please Initialize Again.</strong>',
+                content: 'Time Out!!! Please Initialize Again.',
             });
             $("#remind_text").text("Time Out!!! Please Initialize again.");
-            $("#loading_gif").css('visibility','hidden'); 
         }
         else if(evt.data == '1'){
-            //$("#remind_text").text("Initial Complete");
-            $("#remind_text").text("Initializing Completed.Data Reloading...");
+            $("#remind_text").text("Initial Complete");
             ReloadFunc();
             console.log("initial reload");
         }
         else{
             $("#remind_text").text("Initial Error");
-            $("#loading_gif").css('visibility','hidden');
-        	
-            $.alert({
+        
+        	$.alert({
                 theme: 'modern',
                 icon: 'fa fa-warning',
                 columnClass: 'col-md-5 col-md-offset-4',
                 closeIcon: true,
                 title: 'Alert! Initializing Error',
-                content: '<strong>Please Press Initial Button to Initialize Again.<strong><br>',
+                content: 'Please Press Initial Button to Initialize Again.<br>',
                 type: 'red',
                 typeAnimated: true,
             });

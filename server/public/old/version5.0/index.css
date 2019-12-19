@@ -17,17 +17,11 @@ p{
     color: #666666;
 }
 
-#loading_gif{
-    width: 80%;
-    height: 80%;
-}
-
 #remind_text{
 	font-size: 20px;
 	color: #000000;
-	//margin-left: 15px;
+	margin-left: 20px;
     margin-bottom: 15px;
-    //float: left;
 }
 
 #change_state_block{
