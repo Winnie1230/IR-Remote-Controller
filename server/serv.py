@@ -78,6 +78,7 @@ async def Send(request):
     print("message:", message)
     
     '''-----MQTT Publish-----'''
+    mqttc.reconnect()
     mqttc.publish(product_num+"/Web/SensorChange",message)
     #product_number/web/sensor
 
@@ -86,6 +87,18 @@ async def Send(request):
 
 async def ControllerState(request):
     print("controllerstate")
+
+    '''
+    print(request.rel_url.query['co2'])
+    print(request.rel_url.query['pm2.5'])
+    print(request.rel_url.query['pm10'])
+    print(request.rel_url.query['hcho'])
+    print(request.rel_url.query['tvoc'])
+    print(request.rel_url.query['humid'])
+    print(request.rel_url.query['temp'])
+    print(request.rel_url.query['current'])
+    '''
+
     if timeout or (not connected):
         return web.Response(text="Timeout or Websocket is not connected",content_type='text/html')
     else:
@@ -166,8 +179,10 @@ async def Search(request):
         if(product_dict[search_num] == 'on'):
 	        #print("find product and it's used'")
             search_result = 0
+            
             '''Publish MQTT message to ESP8266 for sensor state'''
             print("search sensorstate")
+            mqttc.reconnect()
             mqttc.publish(search_num+"/Web/SensorState","1")
             #product_num/web/SensorState
             #"1"=> tell esp8266 to return sensors' state
@@ -200,6 +215,7 @@ async def Reload(request):
     print("reload_num: "+reload_num)
     
     '''Publish MQTT message for ESP8266 sensors' states'''
+    mqttc.reconnect()
     mqttc.publish(reload_num+"/Web/SensorState","1")
     #product_num/web/SensorState
     #"1"=>tell esp8266 to return sensors' states
@@ -212,6 +228,7 @@ async def Initial(request):
     print("initial_num: ",initial_num)
 
     '''Publish MQTT message to initialize ESP8266'''
+    mqttc.reconnect()
     mqttc.publish(initial_num+"/Web/Initial","1")
 
     return web.Response(text="initializing",content_type='text/html')
@@ -222,6 +239,7 @@ async def InitialCheck(request):
     received = 1
     websocket_data_type = 2
     initial_result = request.rel_url.query['result']
+    print("initialcheck = "+initial_result)
 
     if initial_result == '1':
         print('initial sucess')
